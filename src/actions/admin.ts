@@ -52,5 +52,5 @@ export async function registerSchool(formData: FormData) {
   }
 
   // Sab sahi hone par user ko pending screen par redirect karein
-  redirect('/pending-approval')
+  redirect(`/verify-otp?email=${encodeURIComponent(email)}`)
 }
