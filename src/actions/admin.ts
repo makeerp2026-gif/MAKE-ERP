@@ -19,7 +19,7 @@ export async function registerSchool(formData: FormData) {
 
   if (authError) {
     console.error("Auth Error:", authError.message)
-    return // BINA KUCH BHEJE RETURN KAR RAHE HAIN TAAKI TYPESCRIPT KHUSH RAHE
+    throw new Error(`Auth Error: ${authError.message}`) // Silent return hataya
   }
 
   // 2. School ki details 'schools' table mein daalein
@@ -33,7 +33,7 @@ export async function registerSchool(formData: FormData) {
 
   if (schoolError) {
     console.error("School DB Error:", schoolError.message)
-    return
+    throw new Error(`School DB Error: ${schoolError.message}`) // Silent return hataya
   }
 
   // 3. User ki details 'user_profiles' table mein daalein
@@ -47,7 +47,7 @@ export async function registerSchool(formData: FormData) {
 
     if (profileError) {
       console.error("Profile DB Error:", profileError.message)
-      return
+      throw new Error(`Profile DB Error: ${profileError.message}`) // Silent return hataya
     }
   }
 
