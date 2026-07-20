@@ -1,4 +1,4 @@
-import { registerSchool } from '../../../actions/admin'
+import { registerSchool } from '@/actions/auth' // @/actions lagane se path ka error kabhi nahi aayega
 
 export default function OnboardingPage() {
   return (
