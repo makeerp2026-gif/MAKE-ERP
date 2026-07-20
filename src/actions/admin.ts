@@ -1,56 +1,47 @@
 'use server'
 
-import { createClient } from '../lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
 
-export async function registerSchool(formData: FormData) {
+// 1. Sirf 'pending' wale users ko database se nikalne ka function
+export async function getPendingUsers() {
   const supabase = await createClient()
   
-  const schoolName = formData.get('schoolName') as string
-  const adminName = formData.get('adminName') as string
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false }) // Naye application sabse upar
 
-  // 1. Supabase Auth mein Master Admin ka account banayein
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-  })
-
-  if (authError) {
-    console.error("Auth Error:", authError.message)
-    throw new Error(`Auth Error: ${authError.message}`) // Silent return hataya
+  if (error) {
+    console.error("Error fetching users:", error)
+    return []
   }
+  return data || []
+}
 
-  // 2. School ki details 'schools' table mein daalein
-  const slug = schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+// 2. User ko Approve karne ka function (status -> approved)
+export async function approveUser(userId: string) {
+  const supabase = await createClient()
   
-  const { data: schoolData, error: schoolError } = await supabase
-    .from('schools')
-    .insert([{ name: schoolName, slug: slug, status: 'pending' }])
-    .select()
-    .single()
+  await supabase
+    .from('user_profiles')
+    .update({ status: 'approved' })
+    .eq('id', userId)
 
-  if (schoolError) {
-    console.error("School DB Error:", schoolError.message)
-    throw new Error(`School DB Error: ${schoolError.message}`) // Silent return hataya
-  }
+  // Page ko auto-refresh karne ke liye
+  revalidatePath('/master-admin')
+}
 
-  // 3. User ki details 'user_profiles' table mein daalein
-  if (authData.user && schoolData) {
-    const { error: profileError } = await supabase.from('user_profiles').insert([{
-      id: authData.user.id,
-      school_id: schoolData.id,
-      full_name: adminName,
-      role: 'MASTER_ADMIN'
-    }])
+// 3. User ko Reject karne ka function (status -> incomplete, taaki wo wapas form bhare)
+export async function rejectUser(userId: string) {
+  const supabase = await createClient()
+  
+  await supabase
+    .from('user_profiles')
+    .update({ status: 'incomplete' })
+    .eq('id', userId)
 
-    if (profileError) {
-      console.error("Profile DB Error:", profileError.message)
-      throw new Error(`Profile DB Error: ${profileError.message}`) // Silent return hataya
-    }
-  }
-
-  // Sab sahi hone par user ko pending screen par redirect karein
-  redirect(`/verify-otp?email=${encodeURIComponent(email)}`)
+  // Page ko auto-refresh karne ke liye
+  revalidatePath('/master-admin')
 }
