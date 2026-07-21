@@ -53,8 +53,14 @@ export default function Header() {
               <Link href="/login/parent" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-b border-gray-50">
                 👨‍👩‍👦 Parent
               </Link>
-              <Link href="/login/subadmin" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                💼 Sub-Admin (Staff)
+              <Link href="/login/accountant" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-b border-gray-50">
+                💰 Accountant
+              </Link>
+              <Link href="/login/librarian" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-b border-gray-50">
+                📚 Librarian
+              </Link>
+              <Link href="/login/receptionist" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                📞 Receptionist
               </Link>
 
             </div>

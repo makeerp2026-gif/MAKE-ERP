@@ -57,7 +57,7 @@ export async function registerSchool(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const schoolName = formData.get('schoolName') as string
-  const adminName = formData.get('adminName') as string // Naya form field yahan add kiya hai
+  const adminName = formData.get('adminName') as string 
 
   // Supabase mein naya account banayein
   const { data, error } = await supabase.auth.signUp({
@@ -66,7 +66,7 @@ export async function registerSchool(formData: FormData) {
     options: {
       data: {
         school_name: schoolName,
-        full_name: adminName, // Aapke form se Admin ka naam database mein jayega
+        full_name: adminName, 
       }
     }
   })
@@ -78,4 +78,31 @@ export async function registerSchool(formData: FormData) {
 
   // Registration successful hone par OTP verification page par bhej dein
   redirect('/verify-otp') 
+} // <-- YAHAN PAR MISSING THA BRACKET! 🚨
+
+// ==========================================
+// 3. FORGOT PASSWORD FUNCTION
+// ==========================================
+export async function resetPassword(formData: FormData) {
+  const email = formData.get('email')?.toString()
+
+  if (!email) {
+    redirect(`/forgot-password?error=${encodeURIComponent("Email zaroori hai!")}`)
+  }
+
+  const supabase = await createClient()
+
+  // Supabase ko bolenge ki is email par reset link bhej do
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    // Jab user email ke link par click karega, toh wo is page par aayega
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
+  })
+
+  if (error) {
+    console.error("Reset Password Error:", error.message)
+    redirect(`/forgot-password?error=${encodeURIComponent(error.message)}`)
+  }
+
+  // Success hone par user ko message dikhayenge
+  redirect('/forgot-password?message=' + encodeURIComponent('Password reset link aapke email par bhej diya gaya hai!'))
 }
