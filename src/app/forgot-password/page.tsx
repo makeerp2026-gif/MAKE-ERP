@@ -1,10 +1,10 @@
-import { resetPassword } from '@/actions/auth'
+import { sendPasswordResetOtp } from '@/actions/auth'
 import Link from 'next/link'
 
 export default function ForgotPasswordPage({
   searchParams,
 }: {
-  searchParams: { message?: string; error?: string }
+  searchParams: { error?: string }
 }) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -14,23 +14,17 @@ export default function ForgotPasswordPage({
           Forgot Password? 🔒
         </h2>
         <p className="text-center text-sm text-gray-500 mb-8">
-          Apna registered email daalein. Hum aapko password reset karne ka link bhejenge.
+          Apna registered email daalein. Hum aapko ek 6-digit OTP bhejenge.
         </p>
 
-        {/* Success ya Error Message Dikhane ke liye */}
         {searchParams?.error && (
           <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg font-medium text-center">
             {searchParams.error}
           </div>
         )}
-        {searchParams?.message && (
-          <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg font-medium text-center animate-fade-in">
-            {searchParams.message}
-          </div>
-        )}
 
-        {/* Form */}
-        <form action={resetPassword} className="space-y-5">
+        {/* Naya Form Action */}
+        <form action={sendPasswordResetOtp} className="space-y-5">
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
               Registered Email ID
@@ -45,7 +39,7 @@ export default function ForgotPasswordPage({
           </div>
 
           <button type="submit" className="w-full bg-black text-white p-3.5 rounded-xl font-bold text-sm hover:bg-gray-900 transition-all">
-            Send Reset Link
+            Send OTP
           </button>
         </form>
 

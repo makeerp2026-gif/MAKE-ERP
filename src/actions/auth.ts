@@ -81,9 +81,10 @@ export async function registerSchool(formData: FormData) {
 } // <-- YAHAN PAR MISSING THA BRACKET! 🚨
 
 // ==========================================
-// 3. FORGOT PASSWORD FUNCTION
 // ==========================================
-export async function resetPassword(formData: FormData) {
+// 3. SEND OTP FOR PASSWORD RESET
+// ==========================================
+export async function sendPasswordResetOtp(formData: FormData) {
   const email = formData.get('email')?.toString()
 
   if (!email) {
@@ -92,17 +93,52 @@ export async function resetPassword(formData: FormData) {
 
   const supabase = await createClient()
 
-  // Supabase ko bolenge ki is email par reset link bhej do
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    // Jab user email ke link par click karega, toh wo is page par aayega
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
-  })
+  // Supabase ko bolenge ki is email par OTP (Recovery code) bhej do
+  const { error } = await supabase.auth.resetPasswordForEmail(email)
 
   if (error) {
-    console.error("Reset Password Error:", error.message)
+    console.error("OTP Send Error:", error.message)
     redirect(`/forgot-password?error=${encodeURIComponent(error.message)}`)
   }
 
-  // Success hone par user ko message dikhayenge
-  redirect('/forgot-password?message=' + encodeURIComponent('Password reset link aapke email par bhej diya gaya hai!'))
+  // OTP send hone ke baad user ko OTP daalne wale page par bhejenge
+  redirect(`/verify-reset-otp?email=${encodeURIComponent(email)}`)
+}
+
+// ==========================================
+// 4. VERIFY OTP & UPDATE PASSWORD
+// ==========================================
+export async function verifyResetOtpAndUpdate(formData: FormData) {
+  const email = formData.get('email')?.toString()
+  const otp = formData.get('otp')?.toString()
+  const newPassword = formData.get('newPassword')?.toString()
+
+  if (!email || !otp || !newPassword) {
+    redirect(`/verify-reset-otp?email=${email}&error=${encodeURIComponent("Saari details bharna zaroori hai!")}`)
+  }
+
+  const supabase = await createClient()
+
+  // Step A: OTP verify karein (Supabase mein password reset ke liye 'recovery' type use hota hai)
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email,
+    token: otp,
+    type: 'recovery',
+  })
+
+  if (verifyError) {
+    redirect(`/verify-reset-otp?email=${email}&error=${encodeURIComponent("Galat OTP! Kripya dobara check karein.")}`)
+  }
+
+  // Step B: OTP sahi hone par user login ho jata hai, ab hum uska naya password set kar denge
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword
+  })
+
+  if (updateError) {
+    redirect(`/verify-reset-otp?email=${email}&error=${encodeURIComponent(updateError.message)}`)
+  }
+
+  // Password update hone ke baad login page par wapas bhej dein
+  redirect('/login/master?message=' + encodeURIComponent('Password successfully change ho gaya hai! Ab naye password se login karein.'))
 }
