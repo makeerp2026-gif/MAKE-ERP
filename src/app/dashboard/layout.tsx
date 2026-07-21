@@ -4,25 +4,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-screen bg-gray-50">
       
-      {/* 🚀 FIXED SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      {/* 🚀 MASTER ADMIN SIDEBAR */}
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col z-10">
         <div className="p-6 border-b border-gray-100">
           <h2 className="text-2xl font-black text-blue-600 tracking-tight">MAKE ERP</h2>
-          <p className="text-xs text-gray-500 mt-1">Master Admin Panel</p>
+          <p className="text-xs font-bold text-gray-500 mt-1 uppercase tracking-wider">Super / Master Admin</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <Link href="/dashboard" className="block px-4 py-3 rounded-xl bg-blue-50 text-blue-700 font-semibold transition">
-            📊 Overview
+            📊 Global Overview
           </Link>
-          <Link href="/dashboard/teachers" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
-            👩‍🏫 Manage Teachers
+          <Link href="/dashboard/schools" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
+            🏫 Manage Schools
           </Link>
-          <Link href="/dashboard/students" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
-            🎓 Manage Students
+          <Link href="/dashboard/reports" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
+            📈 System Reports
           </Link>
-          <Link href="/dashboard/fees" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
-            💰 Fees & Finance
+          <Link href="/dashboard/billing" className="block px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-black font-medium transition">
+            💰 ERP Billing
           </Link>
         </nav>
 
@@ -33,8 +33,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* 🚀 MAIN CONTENT AREA (Yeh right side mein dikhega) */}
-      <main className="flex-1 overflow-y-auto p-8">
+      {/* 🚀 MAIN CONTENT AREA */}
+      <main className="flex-1 overflow-y-auto relative">
         {children}
       </main>
 
