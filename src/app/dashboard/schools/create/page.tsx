@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
+import { registerNewSchool } from '@/actions/school'
 
 export default function CreateSchoolPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -14,15 +15,28 @@ export default function CreateSchoolPage() {
     setSubdomain(val)
   }
 
-  const handleCreateSchool = (e: React.FormEvent) => {
+  // 🚀 ASLI FORM SUBMIT LOGIC
+  const handleCreateSchool = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     
-    // Simulate Backend API Call
-    setTimeout(() => {
+    const formData = new FormData(e.currentTarget)
+    // Subdomain wala field hum state se manually append kar rahe hain kyunki wo combined input hai
+    formData.set('subdomain', subdomain)
+
+    // Backend ko data bhej rahe hain
+    const response = await registerNewSchool(formData)
+
+    if (response.error) {
+      toast.error(response.error, { duration: 5000 })
       setIsLoading(false)
-      toast.success("School successfully registered! Login details sent to School Admin.", { duration: 5000 })
-    }, 2000)
+    } else if (response.success) {
+      toast.success(response.message, { duration: 5000 })
+      // Form successfully bharne ke baad reset kar do
+      e.currentTarget.reset()
+      setSubdomain('')
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -30,7 +44,7 @@ export default function CreateSchoolPage() {
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+        <Link href="/dashboard" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </Link>
         <div>
@@ -39,7 +53,7 @@ export default function CreateSchoolPage() {
         </div>
       </div>
 
-      {/* Form */}
+      {/* 🚀 FORM KO UPDATE KIYA GAYA HAI */}
       <form onSubmit={handleCreateSchool} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
         
         {/* Section 1: School Details */}
@@ -48,7 +62,7 @@ export default function CreateSchoolPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">School Full Name</label>
-              <input type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. SVP High School (Delhi Branch)" />
+              <input name="schoolName" type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="e.g. SVP High School (Delhi Branch)" />
             </div>
             
             <div>
@@ -59,7 +73,7 @@ export default function CreateSchoolPage() {
                   required 
                   value={subdomain}
                   onChange={handleSubdomainChange}
-                  className="w-full p-3.5 border border-gray-200 rounded-l-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-blue-700" 
+                  className="w-full p-3.5 border border-gray-200 rounded-l-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-blue-700 transition-all" 
                   placeholder="svpdelhi" 
                 />
                 <span className="bg-gray-50 border border-l-0 border-gray-200 text-gray-500 p-3.5 rounded-r-xl font-medium">
@@ -70,7 +84,7 @@ export default function CreateSchoolPage() {
 
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">School Address</label>
-              <input type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Complete address of the branch" />
+              <input name="address" type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Complete address of the branch" />
             </div>
           </div>
         </div>
@@ -81,17 +95,17 @@ export default function CreateSchoolPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Admin Name</label>
-              <input type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Mr. Sharma" />
+              <input name="adminName" type="text" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="e.g. Mr. Sharma" />
             </div>
             
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Admin Email ID (For Login)</label>
-              <input type="email" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="principal@svpdelhi.com" />
+              <input name="adminEmail" type="email" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="principal@svpdelhi.com" />
             </div>
             
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Contact Number</label>
-              <input type="tel" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="+91 9876543210" />
+              <input name="adminPhone" type="tel" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="+91 9876543210" />
             </div>
           </div>
         </div>
@@ -105,7 +119,7 @@ export default function CreateSchoolPage() {
               isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-xl'
             }`}
           >
-            {isLoading ? 'Creating School & Admin Account... ⏳' : 'Launch New School 🚀'}
+            {isLoading ? 'Registering School in Database... ⏳' : 'Launch New School 🚀'}
           </button>
         </div>
 
