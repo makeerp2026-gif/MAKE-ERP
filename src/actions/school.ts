@@ -19,13 +19,16 @@ export async function registerNewSchool(formData: FormData) {
       return { error: "Saari zaroori details bharna zaroori hai!" }
     }
 
+    const formattedSubdomain = subdomain.toLowerCase()
+
     // 1️⃣ Sabse pehle 'schools' table mein data save karein
     const { data: newSchool, error: schoolError } = await supabase
       .from('schools')
       .insert([
         { 
           name: schoolName, 
-          subdomain: subdomain.toLowerCase(), 
+          subdomain: formattedSubdomain,
+          slug: formattedSubdomain, // 🚀 YAHAN FIX KIYA HAI
           address: address 
         }
       ])
@@ -33,7 +36,6 @@ export async function registerNewSchool(formData: FormData) {
       .single()
 
     if (schoolError) {
-      // Agar subdomain pehle se kisi ne le liya hai
       if (schoolError.code === '23505') {
         return { error: "Yeh Subdomain pehle se kisi aur school ke paas hai. Kripya doosra chunein." }
       }
@@ -53,7 +55,10 @@ export async function registerNewSchool(formData: FormData) {
       ])
 
     if (adminError) {
-      return { error: adminError.message }
+      // 🚀 ROLLBACK LOGIC: Agar admin fail hua, toh aade-adhure school ko delete kar do
+      await supabase.from('schools').delete().eq('id', newSchool.id)
+      
+      return { error: "Admin details save nahi ho payi. Pura process cancel kar diya gaya hai: " + adminError.message }
     }
 
     // Dashboard ka data refresh karne ke liye
