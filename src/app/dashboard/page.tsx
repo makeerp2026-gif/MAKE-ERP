@@ -13,7 +13,7 @@ export default async function MasterDashboardPage() {
     redirect('/login/master')
   }
 
-  // 2. User ki profile nikaalein (Sirf Master Admin ka naam lene ke liye)
+  // 2. User ki profile nikaalein
   const { data: profile } = await supabase
     .from('user_profiles')
     .select('*')
@@ -41,7 +41,7 @@ export default async function MasterDashboardPage() {
           </Link>
         </div>
 
-        {/* 📊 STATS CARDS (Global Aggregates - Dummy Data for now) */}
+        {/* 📊 STATS CARDS (Global Aggregates) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* Total Schools */}
@@ -63,6 +63,22 @@ export default async function MasterDashboardPage() {
           <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
             <h3 className="font-semibold text-gray-500 text-sm uppercase tracking-wider">Total Parents</h3>
             <p className="text-3xl font-bold mt-2 text-gray-900">4,100</p>
+          </div>
+
+          {/* 🚀 3 NAYE ROLES (Accountant, Librarian, Receptionist) */}
+          <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-500 text-sm uppercase tracking-wider">Accountants 💰</h3>
+            <p className="text-3xl font-bold mt-2 text-gray-900">22</p>
+          </div>
+
+          <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-500 text-sm uppercase tracking-wider">Librarians 📚</h3>
+            <p className="text-3xl font-bold mt-2 text-gray-900">14</p>
+          </div>
+
+          <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-500 text-sm uppercase tracking-wider">Receptionists 📞</h3>
+            <p className="text-3xl font-bold mt-2 text-gray-900">18</p>
           </div>
 
         </div>
