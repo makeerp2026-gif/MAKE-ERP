@@ -18,7 +18,7 @@ export async function loginUser(formData: FormData) {
   const supabase = await createClient()
 
   // 1️⃣ Pata lagayein ki user kis URL par login kar raha hai
-  const headersList = headers()
+  const headersList = await headers()
   const host = headersList.get('host') || ''
   const isMainDomain = host.includes('localhost') || host === 'makeerp.com' || host === 'www.makeerp.com'
   const subdomain = isMainDomain ? null : host.split('.')[0]

@@ -1,31 +1,26 @@
-"use client" // Client component zaroori hai UI interactions (click, toast) ke liye
+"use client" 
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useParams, useSearchParams } from 'next/navigation'
 import { toast } from 'react-hot-toast'
-import { loginAdmin } from '@/actions/auth' // Aapka backend login logic
+import { loginUser } from '@/actions/auth' 
 
 function LoginForm() {
   const params = useParams()
   const searchParams = useSearchParams()
   
-  // URL se role aur errors nikalna
   const role = (params?.role as string) || 'master'
   const error = searchParams?.get('error')
   const message = searchParams?.get('message')
 
-  // 1. Password dikhane ya chupane ka switch
   const [showPassword, setShowPassword] = useState(false)
-  
-  // 2. Button par loading ghumane ka state
   const [isLoading, setIsLoading] = useState(false)
 
-  // 3. Jab bhi URL mein error ya success message aaye, Toast dikhayein
   useEffect(() => {
     if (error) {
       toast.error(error, { duration: 4000 })
-      setIsLoading(false) // Error aane par loading rokein
+      setIsLoading(false) 
     }
     if (message) {
       toast.success(message, { duration: 4000 })
@@ -33,7 +28,6 @@ function LoginForm() {
     }
   }, [error, message])
 
-  // Role ke hisaab se page ka title set karenge
   const getTitle = () => {
     if (role === 'superadmin') return 'Super Admin Login'
     if (role === 'master') return 'Master Admin Login'
@@ -46,10 +40,25 @@ function LoginForm() {
     return 'Login'
   }
 
+  // 🚀 NAYA WRAPPER FUNCTION (TS Error Fix)
+  const handleFormSubmit = async (formData: FormData) => {
+    setIsLoading(true)
+    const result = await loginUser(formData)
+
+    // Agar backend se error aaya, toh toast dikhao aur loading roko
+    if (result?.error) {
+      toast.error(result.error, { duration: 4000 })
+      setIsLoading(false)
+    } 
+    // Agar sab sahi raha, toh dashboard par bhej do
+    else if (result?.success && result.redirectUrl) {
+      toast.success("Login Successful! Redirecting... 🚀")
+      window.location.href = result.redirectUrl
+    }
+  }
+
   return (
     <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-      
-      {/* Dynamic Title */}
       <h2 className="text-3xl font-black text-gray-900 text-center mb-2 capitalize">
         {getTitle()}
       </h2>
@@ -57,12 +66,8 @@ function LoginForm() {
         Welcome back! Please enter your credentials.
       </p>
 
-      {/* Login Form */}
-      <form 
-        action={loginAdmin} 
-        onSubmit={() => setIsLoading(true)} // Submit dabte hi loading shuru
-        className="space-y-5"
-      >
+      {/* 🚀 ACTION MEIN WRAPPER FUNCTION LAGA DIYA */}
+      <form action={handleFormSubmit} className="space-y-5">
         <input type="hidden" name="role" value={role} /> 
         
         <div>
@@ -91,7 +96,6 @@ function LoginForm() {
               placeholder="••••••••"
             />
             
-            {/* 👀 EYE ICON BUTTON 👀 */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -112,7 +116,6 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Dynamic Loading Button */}
         <button 
           type="submit" 
           disabled={isLoading}
@@ -127,7 +130,6 @@ function LoginForm() {
   )
 }
 
-// Next.js mein Client Component ko Suspense mein wrap karna zaroori hai
 export default function RoleLoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
