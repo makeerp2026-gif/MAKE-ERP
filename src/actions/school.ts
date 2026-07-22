@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
+import Razorpay from 'razorpay'
 
 export async function registerNewSchool(formData: FormData) {
   try {
@@ -19,27 +20,50 @@ export async function registerNewSchool(formData: FormData) {
     const adminEmail = formData.get('adminEmail') as string
     const adminPhone = formData.get('adminPhone') as string
     const adminPassword = formData.get('adminPassword') as string 
-    const trialDaysStr = formData.get('trialDays') as string // 🚀 Naya: Trial Days nikalna
+    const trialDaysStr = formData.get('trialDays') as string 
+    const subscriptionPlan = formData.get('subscriptionPlan') as string
 
     if (!schoolName || !subdomain || !adminEmail || !adminPassword) {
-      return { error: "Saari zaroori details (password sahit) bharna zaroori hai!" }
+      return { error: "Saari zaroori details bharna zaroori hai!" }
     }
 
     const formattedSubdomain = subdomain.toLowerCase()
 
-    // 🚀 LOGIC: Trial Expiry Date Calculate karna
+    // Trial Date Calculate
     const trialDays = parseInt(trialDaysStr) || 0
     let trialEndsAt = null
     let currentBillingStatus = 'active'
 
     if (trialDays > 0) {
       const date = new Date()
-      date.setDate(date.getDate() + trialDays) // Aaj ki date mein trial days add kiye
+      date.setDate(date.getDate() + trialDays)
       trialEndsAt = date.toISOString()
-      currentBillingStatus = 'trial' // Status 'trial' set kar diya
+      currentBillingStatus = 'trial'
     }
 
-    // 1️⃣ Sabse pehle Supabase Auth (Login System) mein user banayein
+    // 🚀 DUMMY RAZORPAY LOGIC (Agar Keys nahi hain toh nakli ID banayega)
+    let rzpCustomerId = `cust_dummy_${Math.floor(Math.random() * 1000000)}` 
+
+    // Agar future mein aapne .env mein keys daal di, toh asli Razorpay call chalega
+    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+      try {
+        const razorpay = new Razorpay({
+          key_id: process.env.RAZORPAY_KEY_ID,
+          key_secret: process.env.RAZORPAY_KEY_SECRET,
+        })
+        const customer = await razorpay.customers.create({
+          name: adminName,
+          email: adminEmail,
+          contact: adminPhone,
+          notes: { school_name: schoolName, subdomain: formattedSubdomain }
+        })
+        rzpCustomerId = customer.id
+      } catch (rzpError: any) {
+        return { error: "Razorpay Customer banane mein error: " + rzpError.message }
+      }
+    }
+
+    // 2️⃣ Supabase Auth mein Principal ka login banayein
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: adminEmail,
       password: adminPassword,
@@ -47,13 +71,10 @@ export async function registerNewSchool(formData: FormData) {
     })
 
     if (authError) {
-      if (authError.message.includes('already exists')) {
-         return { error: "Yeh Email ID pehle se kisi aur account mein registered hai." }
-      }
-      return { error: "Login Account banane mein error: " + authError.message }
+      return { error: "Login Account error: " + authError.message }
     }
 
-    // 2️⃣ Phir 'schools' table mein data save karein (with Billing Status)
+    // 3️⃣ Database mein School Save karein
     const { data: newSchool, error: schoolError } = await supabase
       .from('schools')
       .insert([
@@ -62,8 +83,10 @@ export async function registerNewSchool(formData: FormData) {
           subdomain: formattedSubdomain,
           slug: formattedSubdomain,
           address: address,
-          billing_status: currentBillingStatus, // 🚀 Saved Billing Status
-          trial_ends_at: trialEndsAt            // 🚀 Saved Trial Expiry Date
+          billing_status: currentBillingStatus,
+          trial_ends_at: trialEndsAt,
+          subscription_plan: subscriptionPlan,   
+          razorpay_customer_id: rzpCustomerId    // Yahan Asli ya Dummy ID save hogi
         }
       ])
       .select()
@@ -71,14 +94,10 @@ export async function registerNewSchool(formData: FormData) {
 
     if (schoolError) {
       if (authData?.user?.id) await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
-
-      if (schoolError.code === '23505') {
-        return { error: "Yeh Subdomain pehle se kisi aur school ke paas hai. Kripya doosra chunein." }
-      }
       return { error: schoolError.message }
     }
 
-    // 3️⃣ Ab Principal ki details 'school_admins' table mein save karein
+    // 4️⃣ Principal Details Save karein
     const { error: adminError } = await supabase
       .from('school_admins')
       .insert([
@@ -94,12 +113,12 @@ export async function registerNewSchool(formData: FormData) {
     if (adminError) {
       await supabase.from('schools').delete().eq('id', newSchool.id)
       if (authData?.user?.id) await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
-      return { error: "Admin details save nahi ho payi. Process cancel kar diya gaya." }
+      return { error: "Admin details save nahi ho payi." }
     }
 
     revalidatePath('/dashboard/schools')
 
-    return { success: true, message: `School, Login aur ${trialDays} din ka Trial successfully ban gaya hai! 🎉` }
+    return { success: true, message: `School Registered! Razorpay Cust ID: ${rzpCustomerId} 🎉` }
 
   } catch (err: any) {
     return { error: "Kuch gadbad ho gayi: " + err.message }

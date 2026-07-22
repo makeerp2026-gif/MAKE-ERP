@@ -108,10 +108,12 @@ export default function CreateSchoolPage() {
           </div>
         </div>
 
-        {/* 🚀 NAYA SECTION: Section 3: Subscription & Trial Setup */}
+        {/* 🚀 NAYA SECTION: Section 3: Subscription & Billing */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Subscription & Billing</h3>
+          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Subscription & Billing Plans</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Free Trial Dropdown */}
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Free Trial Validity</label>
               <select name="trialDays" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white">
@@ -121,6 +123,19 @@ export default function CreateSchoolPage() {
                 <option value="0">No Trial (Directly Active)</option>
               </select>
             </div>
+
+            {/* 🚀 NAYA: Pricing Plan Dropdown */}
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Monthly Subscription Plan</label>
+              <select name="subscriptionPlan" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white font-medium text-gray-800">
+                <option value="tier_499">₹499 / Month (1 - 200 Students)</option>
+                <option value="tier_999">₹999 / Month (201 - 500 Students)</option>
+                <option value="tier_1499">₹1,499 / Month (501 - 1000 Students)</option>
+                <option value="tier_1999">₹1,999 / Month (1001 - 2000 Students)</option>
+                <option value="custom">Custom Plan (Contact Admin)</option>
+              </select>
+            </div>
+
           </div>
         </div>
 
