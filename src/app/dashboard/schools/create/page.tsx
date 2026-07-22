@@ -9,22 +9,18 @@ export default function CreateSchoolPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [subdomain, setSubdomain] = useState('')
 
-  // Subdomain ko hamesha lowercase aur bina space ke rakhne ke liye
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '')
     setSubdomain(val)
   }
 
-  // 🚀 ASLI FORM SUBMIT LOGIC
   const handleCreateSchool = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     
     const formData = new FormData(e.currentTarget)
-    // Subdomain wala field hum state se manually append kar rahe hain kyunki wo combined input hai
     formData.set('subdomain', subdomain)
 
-    // Backend ko data bhej rahe hain
     const response = await registerNewSchool(formData)
 
     if (response.error) {
@@ -32,7 +28,6 @@ export default function CreateSchoolPage() {
       setIsLoading(false)
     } else if (response.success) {
       toast.success(response.message, { duration: 5000 })
-      // Form successfully bharne ke baad reset kar do
       e.currentTarget.reset()
       setSubdomain('')
       setIsLoading(false)
@@ -42,7 +37,6 @@ export default function CreateSchoolPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       
-      {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Link href="/dashboard" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -53,7 +47,6 @@ export default function CreateSchoolPage() {
         </div>
       </div>
 
-      {/* 🚀 FORM KO UPDATE KIYA GAYA HAI */}
       <form onSubmit={handleCreateSchool} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
         
         {/* Section 1: School Details */}
@@ -106,6 +99,27 @@ export default function CreateSchoolPage() {
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Contact Number</label>
               <input name="adminPhone" type="tel" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="+91 9876543210" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Admin Password</label>
+              <input name="adminPassword" type="text" required minLength={6} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Set a secure password" />
+            </div>
+          </div>
+        </div>
+
+        {/* 🚀 NAYA SECTION: Section 3: Subscription & Trial Setup */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Subscription & Billing</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Free Trial Validity</label>
+              <select name="trialDays" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white">
+                <option value="14">14 Days Free Trial</option>
+                <option value="30" selected>30 Days Free Trial</option>
+                <option value="60">60 Days Free Trial</option>
+                <option value="0">No Trial (Directly Active)</option>
+              </select>
             </div>
           </div>
         </div>
