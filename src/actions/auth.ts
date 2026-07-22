@@ -183,3 +183,43 @@ export async function verifyResetOtpAndUpdate(formData: FormData) {
 
   redirect('/login/master?message=' + encodeURIComponent('Password successfully change ho gaya hai! Ab naye password se login karein.'))
 }
+
+// ==========================================
+// 5. SECRET SUPER ADMIN LOGIN (VIP ENTRY)
+// ==========================================
+export async function loginSuperAdmin(formData: FormData) {
+  const email = formData.get('email')?.toString()
+  const password = formData.get('password')?.toString()
+
+  if (!email || !password) {
+    return { error: "Email aur Password dono daalna zaroori hai!" }
+  }
+
+  const supabase = await createClient()
+
+  // 1. Supabase se ID/Password check karein
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (authError || !authData.user) {
+    return { error: "❌ Invalid Email ID ya Password! Kripya dobara check karein." }
+  }
+
+  // 2. 🚀 STRICT VIP CHECK: Kya yeh sach mein SUPER ADMIN hai?
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('role')
+    .eq('id', authData.user.id)
+    .single()
+
+  // Agar role SUPER_ADMIN nahi hai, toh turant logout karo aur error do!
+  if (profile?.role !== 'SUPER_ADMIN') {
+    await supabase.auth.signOut()
+    return { error: "🚨 ACCESS DENIED! Yeh login page sirf Platform Owner ke liye hai." }
+  }
+
+  // Agar sab theek hai toh seedha VIP Dashboard (Owner Control Room) par bhej do
+  return { success: true, redirectUrl: '/super-admin/dashboard' }
+}
