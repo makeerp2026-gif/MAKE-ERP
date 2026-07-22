@@ -70,6 +70,29 @@ export default function SchoolFormClient({ subdomain }: { subdomain: string }) {
           >
             {showPassword ? "Hide" : "Show"}
           </button>
+          <div>
+        {/* Lable aur Forgot Password ek hi line mein */}
+        <div className="flex justify-between items-center mb-1">
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
+          <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline transition-all">
+            Forgot Password?
+          </a>
+        </div>
+        
+        <div className="relative">
+          <input 
+            name="password" type={showPassword ? "text" : "password"} required 
+            className="w-full p-3.5 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all" 
+            placeholder="••••••••" 
+          />
+          <button
+            type="button" onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-3.5 text-sm font-medium text-gray-400 hover:text-gray-700"
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
+      </div>
         </div>
       </div>
 
