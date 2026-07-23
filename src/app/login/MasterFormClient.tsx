@@ -33,13 +33,7 @@ export default function MasterFormClient() {
       </div>
 
       <div>
-        {/* Label and Forgot Password */}
-        <div className="flex justify-between items-center mb-1">
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
-          <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline transition-all">
-            Forgot Password?
-          </a>
-        </div>
+        
         
         {/* Password Input with Show/Hide */}
         <div className="relative">
@@ -56,6 +50,13 @@ export default function MasterFormClient() {
           </button>
         </div>
       </div>
+      {/* Label and Forgot Password */}
+        <div className="flex justify-between items-center mb-1">
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
+          <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline transition-all">
+            Forgot Password?
+          </a>
+        </div>
 
       <button 
         type="submit" disabled={isLoading} 
