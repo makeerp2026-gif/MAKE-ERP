@@ -1,3 +1,5 @@
+"use client" 
+
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useParams, useSearchParams } from 'next/navigation'
@@ -121,7 +123,7 @@ function LoginForm() {
             isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
           }`}
         >
- Ṁ         {isLoading ? 'Verifying... ⏳' : `Login as ${role} 🚀`}
+          {isLoading ? 'Verifying... ⏳' : `Login as ${role} 🚀`}
         </button>
       </form>
     </div>
