@@ -58,14 +58,9 @@ export default function SchoolFormClient({ subdomain }: { subdomain: string }) {
         />
       </div>
 
-      {/* 🚀 3. SINGLE PASSWORD FIELD (With Forgot & Show/Hide) */}
+      {/* 🚀 3. SINGLE PASSWORD FIELD */}
       <div>
-        <div className="flex justify-between items-center mb-1">
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
-          <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline transition-all">
-            Forgot Password?
-          </a>
-        </div>
+        <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Password</label>
         
         <div className="relative">
           <input 
@@ -79,6 +74,13 @@ export default function SchoolFormClient({ subdomain }: { subdomain: string }) {
           >
             {showPassword ? "Hide" : "Show"}
           </button>
+        </div>
+        
+        {/* 👈 Forgot Password Neeche Aa Gaya */}
+        <div className="text-right mt-2">
+          <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline transition-all">
+            Forgot Password?
+          </a>
         </div>
       </div>
 
