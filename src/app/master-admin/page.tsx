@@ -1,8 +1,9 @@
 import { getPendingUsers, approveUser, rejectUser } from '@/actions/admin'
 
 export default async function MasterAdminDashboard() {
-  // Backend se saare pending users ko le aao
-  const pendingUsers = await getPendingUsers()
+  // Backend se saare pending users ko le aao aur safely data extract karo
+  const response = await getPendingUsers()
+  const pendingUsersList = response?.data || [] // TypeScript khush, hum bhi khush!
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -15,13 +16,13 @@ export default async function MasterAdminDashboard() {
             <p className="text-gray-500 mt-1">Review and manage pending school registrations.</p>
           </div>
           <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold">
-            Pending Applications: {pendingUsers.length}
+            Pending Applications: {pendingUsersList.length}
           </div>
         </div>
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {pendingUsers.length === 0 ? (
+          {pendingUsersList.length === 0 ? (
             <div className="p-12 text-center text-gray-500">
               <p className="text-xl">Koi nayi application nahi hai. Sab shanti hai! ☕</p>
             </div>
@@ -36,7 +37,7 @@ export default async function MasterAdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {pendingUsers.map((user: any) => (
+                {pendingUsersList.map((user: any) => (
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50 transition">
                     <td className="p-4 text-sm text-gray-500">
                       {new Date(user.created_at).toLocaleDateString('en-IN')}

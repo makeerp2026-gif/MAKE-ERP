@@ -1,8 +1,9 @@
 "use server"
 
 import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache' // 👈 Yeh Naya Jaadu Hai
 
-// 1. Pending Users ko laane ka function
+// 1. Pending Users ko laane ka function (Yeh waisa hi rahega)
 export async function getPendingUsers() {
   const supabase = await createClient()
   
@@ -29,10 +30,11 @@ export async function approveUser(id: string) {
     .eq('id', id)
 
   if (error) {
-    return { error: error.message }
+    console.error("Approve karne mein error:", error.message)
   }
   
-  return { success: true }
+  // 🚀 JAISE HI APPROVE HO, PAGE KO BINA RELOAD KIYE REFRESH KAR DO
+  revalidatePath('/master-admin')
 }
 
 // 3. User ko Reject karne ka function
@@ -45,8 +47,9 @@ export async function rejectUser(id: string) {
     .eq('id', id)
 
   if (error) {
-    return { error: error.message }
+    console.error("Reject karne mein error:", error.message)
   }
   
-  return { success: true }
+  // 🚀 JAISE HI REJECT HO, PAGE KO BINA RELOAD KIYE REFRESH KAR DO
+  revalidatePath('/master-admin')
 }
