@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/server'
 export async function submitAdmissionForm(formData: FormData) {
   const supabase = await createClient();
 
-  // Form se data nikal rahe hain
   const admissionData = {
     subdomain: formData.get('subdomain') as string,
     first_name: formData.get('firstName') as string,
@@ -17,7 +16,6 @@ export async function submitAdmissionForm(formData: FormData) {
     status: 'Pending' 
   };
 
-  // Supabase ki 'admissions' table mein data daal rahe hain
   const { error } = await supabase.from('admissions').insert([admissionData]);
 
   if (error) {
