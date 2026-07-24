@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 
+// Yeh function sirf admission form submit karega
 export async function submitAdmissionForm(formData: FormData) {
   const supabase = await createClient();
 

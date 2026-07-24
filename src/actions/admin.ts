@@ -2,27 +2,51 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-export async function submitAdmissionForm(formData: FormData) {
-  const supabase = await createClient();
-
-  // Form se data nikal rahe hain
-  const admissionData = {
-    subdomain: formData.get('subdomain') as string,
-    first_name: formData.get('firstName') as string,
-    last_name: formData.get('lastName') as string,
-    dob: formData.get('dob') as string,
-    class_applied: formData.get('classApplied') as string,
-    parent_name: formData.get('parentName') as string,
-    phone: formData.get('phone') as string,
-    status: 'Pending' 
-  };
-
-  // Supabase ki 'admissions' table mein data daal rahe hain
-  const { error } = await supabase.from('admissions').insert([admissionData]);
+// 1. Pending Users ko laane ka function
+export async function getPendingUsers() {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('admissions') 
+    .select('*')
+    .eq('status', 'Pending')
+    .order('created_at', { ascending: false })
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message }
   }
   
-  return { success: true };
+  return { data }
+}
+
+// 2. User ko Approve karne ka function
+export async function approveUser(id: string) {
+  const supabase = await createClient()
+  
+  const { error } = await supabase
+    .from('admissions') 
+    .update({ status: 'Approved' })
+    .eq('id', id)
+
+  if (error) {
+    return { error: error.message }
+  }
+  
+  return { success: true }
+}
+
+// 3. User ko Reject karne ka function
+export async function rejectUser(id: string) {
+  const supabase = await createClient()
+  
+  const { error } = await supabase
+    .from('admissions')
+    .update({ status: 'Rejected' })
+    .eq('id', id)
+
+  if (error) {
+    return { error: error.message }
+  }
+  
+  return { success: true }
 }
