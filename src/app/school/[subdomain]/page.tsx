@@ -1,12 +1,16 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server' // Aapka DB Connection
+import { createClient } from '@/lib/supabase/server'
+
+// 🚀 EK-DUM SAHI IMPORTS (Aapke naye folder ke hisaab se)
+import SchoolHeader from '../../components/school-components/SchoolHeader'
+import SchoolFooter from '../../components/school-components/SchoolFooter'
+import SchoolNoticeBoard from '../../components/school-components/SchoolNoticeBoard'
 
 export default async function SchoolHomePage({ params }: { params: Promise<{ subdomain: string }> }) {
   const resolvedParams = await params;
   const subdomain = resolvedParams.subdomain;
 
-  // 🚀 DATABASE CHECK (Aapke purane code se)
+  // Database se School ki details nikalna
   const supabase = await createClient();
   const { data: school } = await supabase
     .from('schools')
@@ -14,45 +18,54 @@ export default async function SchoolHomePage({ params }: { params: Promise<{ sub
     .eq('subdomain', subdomain)
     .single();
 
-  // Agar school DB mein nahi mila, toh 404 Page dikhao
+  // Agar URL mein galat school ka naam hai toh 404 Page dikhao
   if (!school) {
     notFound();
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      <div className="bg-white p-10 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      
+      {/* 🟢 CUSTOM SCHOOL HEADER */}
+      <SchoolHeader schoolName={school.name} logoUrl={school.logo_url} />
+
+      {/* 🔵 MAIN CONTENT AREA */}
+      <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-12">
         
-        {/* 🏫 REAL SCHOOL LOGO / INITIALS */}
-        {school.logo_url ? (
-          <img src={school.logo_url} alt={school.name} className="mx-auto h-24 w-auto object-contain mb-6" />
-        ) : (
-          <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-4xl font-black shadow-lg">
-            {school.name.charAt(0).toUpperCase()}
+        {/* Welcome Section */}
+        <div className="text-center mb-16 pt-10">
+          <h1 className="text-5xl font-black text-slate-900 mb-6 uppercase">
+            Welcome to {school.name}
+          </h1>
+          <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">
+            Empowering students to achieve their full potential through quality education and discipline.
+          </p>
+        </div>
+
+        {/* Dashboard Grid (Notice Board + Admission Banner) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <div className="lg:col-span-2 bg-blue-600 rounded-3xl p-10 text-white shadow-xl flex flex-col justify-center">
+            <h2 className="text-3xl font-black mb-4">Admissions Open 2026-27</h2>
+            <p className="text-blue-100 mb-8 max-w-md text-lg leading-relaxed">
+              Secure your child's future with our world-class facilities and expert faculty. Apply online today!
+            </p>
+            <a href={`/school/${subdomain}/admission`} className="w-max bg-white text-blue-900 font-black py-4 px-10 rounded-xl shadow-lg hover:scale-105 transition-transform">
+              Apply Now 🚀
+            </a>
           </div>
-        )}
-        
-        <h1 className="text-4xl font-black text-slate-900 mb-4 uppercase">{school.name}</h1>
-        <p className="text-slate-500 font-medium mb-8 text-lg">
-          Welcome to our official school portal. Manage your academics, fees, and operations seamlessly.
-        </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link href={`/login`} className="bg-blue-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-blue-700 transition-all shadow-md">
-            School Login 🔒
-          </Link>
-          <Link href={`/admission`} className="bg-slate-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-800 transition-all shadow-md">
-            New Admission 🎓
-          </Link>
-        </div>
+          {/* 🟡 CUSTOM NOTICE BOARD COMPONENT */}
+          <div className="lg:col-span-1">
+            <SchoolNoticeBoard />
+          </div>
 
-        <div className="text-sm text-slate-400 font-medium border-t pt-6">
-          <Link href="#" className="hover:text-blue-600 mx-2">Privacy Policy</Link> | 
-          <Link href="#" className="hover:text-blue-600 mx-2">Terms of Service</Link> | 
-          <Link href="#" className="hover:text-blue-600 mx-2">Contact Us</Link>
-          <p className="mt-2 text-xs">Powered by MAKE ERP</p>
         </div>
-      </div>
+      </main>
+
+      {/* 🟤 CUSTOM SCHOOL FOOTER */}
+      <SchoolFooter schoolName={school.name} />
+
     </div>
   )
 }
