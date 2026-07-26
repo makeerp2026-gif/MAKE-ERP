@@ -49,7 +49,8 @@ export default async function SchoolHomePage({ params }: { params: Promise<{ sub
             <p className="text-blue-100 mb-8 max-w-md text-lg leading-relaxed">
               Secure your child's future with our world-class facilities and expert faculty. Apply online today!
             </p>
-            <a href={`/school/${subdomain}/admission`} className="w-max bg-white text-blue-900 font-black py-4 px-10 rounded-xl shadow-lg hover:scale-105 transition-transform">
+            {/* 🚀 FIXED LINK: Sirf /admission rakha hai */}
+            <a href="/admission" className="w-max bg-white text-blue-900 font-black py-4 px-10 rounded-xl shadow-lg hover:scale-105 transition-transform">
               Apply Now 🚀
             </a>
           </div>
@@ -58,25 +59,26 @@ export default async function SchoolHomePage({ params }: { params: Promise<{ sub
           </div>
         </div>
 
-        {/* 🚀 NEW: INDUSTRY STANDARD STUDENT SERVICES SECTION */}
+        {/* 🚀 FIXED LINKS: INDUSTRY STANDARD STUDENT SERVICES SECTION */}
         <div className="mt-16">
           <h3 className="text-2xl font-black text-slate-900 mb-6 uppercase border-l-4 border-blue-600 pl-4">
             Student Services
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href={`/school/${subdomain}/results`} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
+            {/* Saare links se `/school/${subdomain}` hata diya hai */}
+            <a href="/results" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
               <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">📊</span>
               <span className="font-bold text-slate-700 text-sm">Download Result</span>
             </a>
-            <a href={`/school/${subdomain}/certificates`} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
+            <a href="/certificates" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
               <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">📜</span>
               <span className="font-bold text-slate-700 text-sm">Certificates & TC</span>
             </a>
-            <a href={`/school/${subdomain}/admit-card`} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
+            <a href="/admit-card" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
               <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">🎫</span>
               <span className="font-bold text-slate-700 text-sm">Download Admit Card</span>
             </a>
-            <a href={`/school/${subdomain}/pay-fees`} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
+            <a href="/pay-fees" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-500 transition-all group flex flex-col items-center text-center">
               <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">💳</span>
               <span className="font-bold text-slate-700 text-sm">Pay Online Fees</span>
             </a>
