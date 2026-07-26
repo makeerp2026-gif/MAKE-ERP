@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import LoginForm from './LoginForm' // 👈 Naya Client Component import kiya
 
 export default async function SchoolLoginPage({ params }: { params: Promise<{ subdomain: string }> }) {
   const resolvedParams = await params;
@@ -48,57 +49,13 @@ export default async function SchoolLoginPage({ params }: { params: Promise<{ su
           </div>
         </div>
 
-        {/* ⚪ Right Side: Login Form */}
-        <div className="w-full md:w-7/12 p-10 md:p-14">
+        {/* ⚪ Right Side: Interactive Login Form */}
+        <div className="w-full md:w-7/12 p-10 md:p-14 flex flex-col justify-center">
           <h2 className="text-2xl font-black text-slate-900 mb-2">Welcome Back 👋</h2>
-          <p className="text-slate-500 text-sm font-medium mb-8">Please login to your account to continue.</p>
+          <p className="text-slate-500 text-sm font-medium mb-10">Enter your credentials to access your portal.</p>
 
-          <form className="space-y-6">
-            
-            {/* Smart Role Selection (Unified Portal) */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Login As *</label>
-              <select defaultValue="" className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition font-medium text-slate-700">
-                <option value="" disabled>Select your portal...</option>
-                <option value="student_parent">🎓 Student / Parent Portal</option>
-                <option value="staff">💼 Staff / Employee Portal</option>
-                <option value="admin">👑 Principal / Admin Portal</option>
-              </select>
-            </div>
-
-            {/* User ID */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">User ID / Registration No. *</label>
-              <input 
-                type="text" 
-                required 
-                placeholder="Enter your ID" 
-                className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition" 
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-bold text-slate-700">Password *</label>
-                <a href="#" className="text-xs font-bold text-blue-600 hover:underline">Forgot Password?</a>
-              </div>
-              <input 
-                type="password" 
-                required 
-                placeholder="••••••••" 
-                className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition" 
-              />
-            </div>
-
-            {/* Login Button */}
-            <button 
-              type="button" 
-              className="w-full bg-blue-600 text-white font-black py-4 rounded-xl hover:bg-blue-700 transition shadow-lg mt-4"
-            >
-              Secure Login 🔒
-            </button>
-          </form>
+          {/* 🚀 YAHAN AAYEGA HAMARA NAYA FORM */}
+          <LoginForm />
 
         </div>
       </div>
