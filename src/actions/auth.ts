@@ -70,7 +70,7 @@ export async function loginUser(formData: FormData) {
   else {
     const { data: schoolData } = await supabase
       .from('schools')
-      .select('id')
+      .select('id, billing_status') // 🚀 NAYA: billing_status fetch kiya
       .eq('subdomain', subdomain)
       .single()
 
@@ -79,7 +79,16 @@ export async function loginUser(formData: FormData) {
       return { error: "🚫 Yeh school URL exist nahi karta!" }
     }
 
-    // Check ki kya yeh user IS school ka Principal hai
+    // 🚨 NAYA LOGIC: YAHAN BLOCK KARENGE (Agar payment nahi hua hai)
+    if (schoolData.billing_status === 'unpaid' || schoolData.billing_status === 'locked') {
+      await supabase.auth.signOut() // User ko turant bahar nikalo
+      return { 
+        success: false, 
+        error: "Access Locked! 🔒 Aapke college ka ERP subscription expire ho gaya hai. Kripya apne Sanstha/Master Admin se payment clear karne ko kahein." 
+      };
+    }
+
+    // Check ki kya yeh user IS school ka Principal/Staff hai
     const { data: schoolAdmin } = await supabase
       .from('school_admins')
       .select('id')
