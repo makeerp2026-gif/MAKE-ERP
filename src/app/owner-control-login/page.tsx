@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 export default async function SuperAdminDashboard() {
   const supabase = await createClient()
 
-  // 1. VIP Security Check (Double Verification)
+  // 1. VIP Security Check
   const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) redirect('/owner-control-login')
 
@@ -15,14 +15,24 @@ export default async function SuperAdminDashboard() {
     .eq('id', user.id)
     .single()
 
-  // 🛡️ Loop-Proof Safe UI Error (Redirect loop se bachne ke liye)
+  // 🚀 NAYA LOGIC: Direct Server Logout (Bina 404 Error Ke)
+  const handleLogout = async () => {
+    "use server"
+    const supabaseServer = await createClient()
+    await supabaseServer.auth.signOut()
+    redirect('/owner-control-login')
+  }
+
+  // 🛡️ Loop-Proof Safe UI Error
   if (profile?.role !== 'SUPER_ADMIN') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white p-6 font-sans">
         <span className="text-6xl mb-4">🚫</span>
         <h1 className="text-3xl font-black text-red-500 tracking-widest uppercase">Access Denied</h1>
         <p className="text-gray-400 mt-2 font-medium">Aapka account Platform Owner (SUPER_ADMIN) role par set nahi hai.</p>
-        <form action="/auth/signout" method="post" className="mt-8">
+        
+        {/* Yahan /auth/signout hata kar action={handleLogout} laga diya */}
+        <form action={handleLogout} className="mt-8">
           <button type="submit" className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg">
             Force Logout & Retry
           </button>
@@ -39,7 +49,7 @@ export default async function SuperAdminDashboard() {
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
 
-  // 3. Approval Server Action (Fixed Path to /owner-control/dashboard)
+  // 3. Approval Server Action
   const approveSanstha = async (formData: FormData) => {
     "use server"
     const adminId = formData.get('adminId') as string
@@ -50,7 +60,6 @@ export default async function SuperAdminDashboard() {
       .update({ status: 'approved' })
       .eq('id', adminId)
       
-    // 🚀 Corrected Path
     revalidatePath('/owner-control/dashboard')
   }
 
@@ -67,7 +76,9 @@ export default async function SuperAdminDashboard() {
             </div>
             <p className="text-gray-400 font-medium">Welcome back, {profile.full_name || 'Boss'}! Yahan se poora MAKE ERP control karein.</p>
           </div>
-          <form action="/auth/signout" method="post">
+          
+          {/* Main Dashboard Logout Button bhi fix kar diya */}
+          <form action={handleLogout}>
             <button type="submit" className="bg-red-600/10 text-red-500 border border-red-500/20 px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-600 hover:text-white transition-all shadow-sm">
               Lock Terminal (Logout)
             </button>
