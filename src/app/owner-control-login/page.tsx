@@ -15,8 +15,20 @@ export default async function SuperAdminDashboard() {
     .eq('id', user.id)
     .single()
 
+  // 🛡️ Loop-Proof Safe UI Error (Redirect loop se bachne ke liye)
   if (profile?.role !== 'SUPER_ADMIN') {
-    redirect('/owner-control-login?error=Access Denied')
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white p-6 font-sans">
+        <span className="text-6xl mb-4">🚫</span>
+        <h1 className="text-3xl font-black text-red-500 tracking-widest uppercase">Access Denied</h1>
+        <p className="text-gray-400 mt-2 font-medium">Aapka account Platform Owner (SUPER_ADMIN) role par set nahi hai.</p>
+        <form action="/auth/signout" method="post" className="mt-8">
+          <button type="submit" className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg">
+            Force Logout & Retry
+          </button>
+        </form>
+      </div>
+    )
   }
 
   // 2. Fetch Pending Sanstha Requests
@@ -27,7 +39,7 @@ export default async function SuperAdminDashboard() {
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
 
-  // 3. Approval Server Action
+  // 3. Approval Server Action (Fixed Path to /owner-control/dashboard)
   const approveSanstha = async (formData: FormData) => {
     "use server"
     const adminId = formData.get('adminId') as string
@@ -38,8 +50,8 @@ export default async function SuperAdminDashboard() {
       .update({ status: 'approved' })
       .eq('id', adminId)
       
-    // Page ko turant refresh karne ke liye
-    revalidatePath('/super-admin/dashboard')
+    // 🚀 Corrected Path
+    revalidatePath('/owner-control/dashboard')
   }
 
   return (

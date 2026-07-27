@@ -57,7 +57,7 @@ export async function loginUser(formData: FormData) {
       redirect('/pending-approval')
     } else if (userStatus === 'approved') {
        if (profile.role === 'SUPER_ADMIN') {
-         redirect('/super-admin/dashboard')
+         redirect('/owner-control/dashboard')
        } else {
          redirect('/dashboard')
        }
