@@ -230,5 +230,5 @@ export async function loginSuperAdmin(formData: FormData) {
   }
 
   // Agar sab theek hai toh seedha VIP Dashboard (Owner Control Room) par bhej do
-  return { success: true, redirectUrl: '/super-admin/dashboard' }
+  return { success: true, redirectUrl: '/owner-control/dashboard' }
 }
