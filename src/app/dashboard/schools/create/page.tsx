@@ -112,32 +112,39 @@ export default function CreateSchoolPage() {
           </div>
         </div>
 
-        {/* Section 3: SaaS Billing Model (Freemium Strategy) */}
+        {/* Section 3: SaaS Billing Model (Auto Freemium Strategy) */}
         <div>
           <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Initial Setup & Billing Mode</h3>
           <div className="grid grid-cols-1 gap-6">
             
-            <div className="bg-blue-50 border border-blue-200 p-5 rounded-2xl">
-              <label className="block text-xs font-black text-blue-900 uppercase mb-3">Set Billing Status</label>
-              
-              <select name="billingMode" required className="w-full p-4 border border-blue-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none transition-all font-bold text-slate-800 shadow-sm cursor-pointer">
-                <option value="free_50">🎁 Free Tier (Up to 50 Students Allowed)</option>
-                <option value="paid">💳 Premium Tier (₹15 / Active Student / Month)</option>
-              </select>
+            <div className="bg-blue-50 border border-blue-200 p-6 rounded-2xl relative overflow-hidden">
+              {/* Top Right Badge */}
+              <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl tracking-wider uppercase shadow-sm">
+                Auto-Billing Enabled ⚙️
+              </div>
+
+              <label className="block text-sm font-black text-blue-900 uppercase mb-2">Standard Freemium Plan</label>
+              <p className="text-xs text-blue-800 font-medium mb-4">
+                No selection required. The system automatically manages billing based on the active student count.
+              </p>
 
               {/* Bilingual Notice */}
-              <div className="mt-4 p-4 bg-white/60 rounded-xl border border-blue-100 space-y-3">
-                <p className="text-xs text-slate-700 leading-relaxed">
+              <div className="p-4 bg-white/80 rounded-xl border border-blue-100 space-y-4 shadow-sm">
+                <p className="text-sm text-slate-700 leading-relaxed">
                   <span className="font-black text-blue-700 uppercase tracking-wide text-[10px] bg-blue-100 px-2 py-1 rounded mr-2">English</span>
-                  <strong>Free plan is limited to 50 active students.</strong> Exceeding this limit will automatically switch the account to the Premium tier and billing will start at ₹15 per student/month.
+                  <strong>0 to 50 Students:</strong> 100% Free.<br/>
+                  <strong>51+ Students:</strong> Account automatically switches to Premium. Monthly billing starts at ₹15 per active student.
                 </p>
                 <div className="h-px w-full bg-blue-200/50"></div>
-                <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                <p className="text-sm text-slate-700 leading-relaxed font-medium">
                   <span className="font-black text-orange-700 uppercase tracking-wide text-[10px] bg-orange-100 px-2 py-1 rounded mr-2">Hindi</span>
-                  <strong>फ्री प्लान में केवल 50 छात्रों (Students) तक की अनुमति है।</strong> 50 से अधिक छात्र ऐड करने पर अकाउंट अपने आप प्रीमियम में बदल जाएगा और ₹15 प्रति छात्र/महीने का चार्ज लगना शुरू हो जाएगा।
+                  <strong>0 से 50 छात्र (Students):</strong> बिल्कुल फ्री।<br/>
+                  <strong>51 या अधिक छात्र:</strong> अकाउंट अपने आप प्रीमियम में बदल जाएगा और ₹15 प्रति छात्र/महीने का बिल आना शुरू हो जाएगा।
                 </p>
               </div>
 
+              {/* Backend ke liye hidden input taaki database ko pata rahe ki ye auto-freemium hai */}
+              <input type="hidden" name="billingMode" value="auto_freemium" />
             </div>
 
           </div>
