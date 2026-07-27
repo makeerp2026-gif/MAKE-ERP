@@ -112,20 +112,32 @@ export default function CreateSchoolPage() {
           </div>
         </div>
 
-        {/* Section 3: SaaS Billing Model (Jio Strategy) */}
+        {/* Section 3: SaaS Billing Model (Freemium Strategy) */}
         <div>
           <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Initial Setup & Billing Mode</h3>
           <div className="grid grid-cols-1 gap-6">
             
             <div className="bg-blue-50 border border-blue-200 p-5 rounded-2xl">
               <label className="block text-xs font-black text-blue-900 uppercase mb-3">Set Billing Status</label>
+              
               <select name="billingMode" required className="w-full p-4 border border-blue-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none transition-all font-bold text-slate-800 shadow-sm cursor-pointer">
-                <option value="free">🎁 Free Mode (Unlimited Access, No Charges)</option>
-                <option value="paid">💳 Paid Mode (₹15 / Active Student / Month)</option>
+                <option value="free_50">🎁 Free Tier (Up to 50 Students Allowed)</option>
+                <option value="paid">💳 Premium Tier (₹15 / Active Student / Month)</option>
               </select>
-              <p className="text-xs text-blue-700 font-medium mt-3">
-                * Note: Aap "Free Mode" ko baad mein 'Manage Schools' dashboard se kabhi bhi band (turn off) karke billing chalu kar sakte hain.
-              </p>
+
+              {/* Bilingual Notice */}
+              <div className="mt-4 p-4 bg-white/60 rounded-xl border border-blue-100 space-y-3">
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  <span className="font-black text-blue-700 uppercase tracking-wide text-[10px] bg-blue-100 px-2 py-1 rounded mr-2">English</span>
+                  <strong>Free plan is limited to 50 active students.</strong> Exceeding this limit will automatically switch the account to the Premium tier and billing will start at ₹15 per student/month.
+                </p>
+                <div className="h-px w-full bg-blue-200/50"></div>
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                  <span className="font-black text-orange-700 uppercase tracking-wide text-[10px] bg-orange-100 px-2 py-1 rounded mr-2">Hindi</span>
+                  <strong>फ्री प्लान में केवल 50 छात्रों (Students) तक की अनुमति है।</strong> 50 से अधिक छात्र ऐड करने पर अकाउंट अपने आप प्रीमियम में बदल जाएगा और ₹15 प्रति छात्र/महीने का चार्ज लगना शुरू हो जाएगा।
+                </p>
+              </div>
+
             </div>
 
           </div>
