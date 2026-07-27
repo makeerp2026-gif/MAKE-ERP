@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
+  console.log(`🚦 TRAFFIC POLICE: Koi is URL par ja raha hai -> ${url.pathname}`);
   
   // 1. Hostname nikalo aur 'www.' ko hata do taaki confusion na ho
   const hostname = req.headers.get('host') || '';
