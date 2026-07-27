@@ -10,6 +10,7 @@ export default function CreateSchoolPage() {
   const [subdomain, setSubdomain] = useState('')
 
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Sirf small letters aur numbers allow karenge
     const val = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '')
     setSubdomain(val)
   }
@@ -21,13 +22,16 @@ export default function CreateSchoolPage() {
     const formData = new FormData(e.currentTarget)
     formData.set('subdomain', subdomain)
 
+    toast.loading('Registering school in database...', { id: 'setup' })
+    
+    // Direct Database mein School Banayenge (Bina Payment Ke)
     const response = await registerNewSchool(formData)
 
     if (response.error) {
-      toast.error(response.error, { duration: 5000 })
+      toast.error(response.error || 'Registration failed!', { id: 'setup' })
       setIsLoading(false)
-    } else if (response.success) {
-      toast.success(response.message, { duration: 5000 })
+    } else {
+      toast.success('School successfully registered & activated! 🚀', { id: 'setup' })
       e.currentTarget.reset()
       setSubdomain('')
       setIsLoading(false)
@@ -35,7 +39,7 @@ export default function CreateSchoolPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto font-sans">
       
       <div className="flex items-center gap-4 mb-8">
         <Link href="/dashboard" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
@@ -43,7 +47,7 @@ export default function CreateSchoolPage() {
         </Link>
         <div>
           <h1 className="text-3xl font-black text-gray-900">Register New School 🏫</h1>
-          <p className="text-gray-500 mt-1">Ek naya school (branch) banayein aur uska School Admin assign karein.</p>
+          <p className="text-gray-500 mt-1 font-medium">Ek naya school (branch) banayein aur usko free ya paid mode mein assign karein.</p>
         </div>
       </div>
 
@@ -108,47 +112,35 @@ export default function CreateSchoolPage() {
           </div>
         </div>
 
-        {/* 🚀 NAYA SECTION: Section 3: Subscription & Billing */}
+        {/* Section 3: SaaS Billing Model (Jio Strategy) */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Subscription & Billing Plans</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">3. Initial Setup & Billing Mode</h3>
+          <div className="grid grid-cols-1 gap-6">
             
-            {/* Free Trial Dropdown */}
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Free Trial Validity</label>
-              <select name="trialDays" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white">
-                <option value="14">14 Days Free Trial</option>
-                <option value="30" selected>30 Days Free Trial</option>
-                <option value="60">60 Days Free Trial</option>
-                <option value="0">No Trial (Directly Active)</option>
+            <div className="bg-blue-50 border border-blue-200 p-5 rounded-2xl">
+              <label className="block text-xs font-black text-blue-900 uppercase mb-3">Set Billing Status</label>
+              <select name="billingMode" required className="w-full p-4 border border-blue-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none transition-all font-bold text-slate-800 shadow-sm cursor-pointer">
+                <option value="free">🎁 Free Mode (Unlimited Access, No Charges)</option>
+                <option value="paid">💳 Paid Mode (₹15 / Active Student / Month)</option>
               </select>
-            </div>
-
-            {/* 🚀 NAYA: Pricing Plan Dropdown */}
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Monthly Subscription Plan</label>
-              <select name="subscriptionPlan" required className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white font-medium text-gray-800">
-                <option value="tier_499">₹499 / Month (1 - 200 Students)</option>
-                <option value="tier_999">₹999 / Month (201 - 500 Students)</option>
-                <option value="tier_1499">₹1,499 / Month (501 - 1000 Students)</option>
-                <option value="tier_1999">₹1,999 / Month (1001 - 2000 Students)</option>
-                <option value="custom">Custom Plan (Contact Admin)</option>
-              </select>
+              <p className="text-xs text-blue-700 font-medium mt-3">
+                * Note: Aap "Free Mode" ko baad mein 'Manage Schools' dashboard se kabhi bhi band (turn off) karke billing chalu kar sakte hain.
+              </p>
             </div>
 
           </div>
         </div>
 
         {/* Submit Button */}
-        <div className="pt-4">
+        <div className="pt-2">
           <button 
             type="submit" 
             disabled={isLoading}
-            className={`w-full text-white p-4 rounded-xl font-black text-lg transition-all shadow-lg ${
-              isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-xl'
+            className={`w-full text-white p-4 rounded-xl font-black text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+              isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20'
             }`}
           >
-            {isLoading ? 'Registering School in Database... ⏳' : 'Launch New School 🚀'}
+            {isLoading ? 'Registering School... ⏳' : 'Launch New School 🚀'}
           </button>
         </div>
 
