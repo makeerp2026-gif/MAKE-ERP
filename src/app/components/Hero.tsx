@@ -14,9 +14,9 @@ export default function Hero() {
         Make ERP brings all your administration, student management, and daily operations into one powerful, easy-to-use platform.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link href="/login" className="bg-blue-600 text-white font-bold py-4 px-10 rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/30 text-lg">
-          Start Free Trial
-        </Link>
+        <Link href="/onboarding" className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/30">
+  Start Free Trial
+</Link>
         <button className="bg-white border border-slate-200 text-slate-700 font-bold py-4 px-10 rounded-xl hover:bg-slate-50 transition-all shadow-sm text-lg">
           View Features
         </button>
