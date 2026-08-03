@@ -108,40 +108,73 @@ export async function loginUser(formData: FormData) {
 
 // ==========================================
 // // ==========================================
+// ==========================================
 // 2. REGISTRATION FUNCTION (Sanstha Onboarding)
 // ==========================================
 export async function registerSchool(formData: FormData) {
   const supabase = await createClient()
   
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  
-  // 🚀 Naye Form Fields Yahan Get Kiye
-  const sansthaName = formData.get('sansthaName') as string
-  const adminName = formData.get('adminName') as string 
-  const phone = formData.get('phone') as string
+  const email = (formData.get('email') as string)?.trim()
+  const password = (formData.get('password') as string)?.trim()
+  const sansthaName = (formData.get('sansthaName') as string)?.trim()
+  const adminName = (formData.get('adminName') as string)?.trim() 
+  const phone = (formData.get('phone') as string)?.trim()
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        sanstha_name: sansthaName, // school_name hata kar sanstha_name kar diya
-        full_name: adminName, 
-        phone: phone,              // Phone number add ho gaya
-        role: 'MASTER_ADMIN',      // 👈 Auto role assign
-        status: 'pending'          // 👈 Auto status assign
+  let redirectTarget = ''
+
+  try {
+    // 1. Auth banayein
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          sanstha_name: sansthaName,
+          full_name: adminName,
+          phone: phone,
+          role: 'MASTER_ADMIN',
+          status: 'pending'
+        }
       }
-    }
-  })
+    })
 
-  if (error) {
-    console.error("Signup Error:", error.message)
-    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`)
+    if (authError) {
+      console.error("=== SUPABASE AUTH ERROR ===", authError.message)
+      // Screen par asli error dikhayega
+      redirectTarget = `/onboarding?error=${encodeURIComponent(authError.message)}`
+    } else if (authData?.user) {
+      // 2. 🚀 ZABARDASTI INSERT: Agar backend trigger fail ho jaye, toh manually table mein daalo
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert({
+          id: authData.user.id,
+          email: email,
+          full_name: adminName,
+          role: 'MASTER_ADMIN',
+          status: 'pending'
+        })
+
+      if (profileError) {
+        console.error("=== PROFILE TABLE INSERT ERROR ===", profileError.message)
+      }
+
+      // 3. Sab theek raha toh OTP page par bhejo
+      redirectTarget = '/verify-otp'
+    }
+  } catch (err: any) {
+    // Next.js ke redirect error ko ignore karna zaroori hai
+    if (err?.message?.includes('NEXT_REDIRECT')) {
+      throw err
+    }
+    console.error("=== UNEXPECTED ERROR ===", err)
+    const errorMessage = err?.message || 'Registration failed. Please try again.'
+    redirectTarget = `/onboarding?error=${encodeURIComponent(errorMessage)}`
   }
 
-  // 📧 OTP verification wale page par bhej rahe hain (Ekdum Premium Flow!)
-  redirect('/verify-otp') 
+  // Redirect hamesha try-catch ke bahar hona chahiye Next.js mein
+  if (redirectTarget) {
+    redirect(redirectTarget)
+  }
 }
 
 // ==========================================
