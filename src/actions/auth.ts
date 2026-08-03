@@ -107,23 +107,30 @@ export async function loginUser(formData: FormData) {
 }
 
 // ==========================================
-// 2. REGISTRATION FUNCTION (Onboarding)
+// // ==========================================
+// 2. REGISTRATION FUNCTION (Sanstha Onboarding)
 // ==========================================
 export async function registerSchool(formData: FormData) {
   const supabase = await createClient()
   
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const schoolName = formData.get('schoolName') as string
+  
+  // 🚀 Naye Form Fields Yahan Get Kiye
+  const sansthaName = formData.get('sansthaName') as string
   const adminName = formData.get('adminName') as string 
+  const phone = formData.get('phone') as string
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
-        school_name: schoolName,
+        sanstha_name: sansthaName, // school_name hata kar sanstha_name kar diya
         full_name: adminName, 
+        phone: phone,              // Phone number add ho gaya
+        role: 'MASTER_ADMIN',      // 👈 Auto role assign
+        status: 'pending'          // 👈 Auto status assign
       }
     }
   })
@@ -133,8 +140,9 @@ export async function registerSchool(formData: FormData) {
     redirect(`/onboarding?error=${encodeURIComponent(error.message)}`)
   }
 
+  // 📧 OTP verification wale page par bhej rahe hain (Ekdum Premium Flow!)
   redirect('/verify-otp') 
-} 
+}
 
 // ==========================================
 // 3. SEND OTP FOR PASSWORD RESET
