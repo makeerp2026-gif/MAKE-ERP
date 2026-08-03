@@ -18,12 +18,12 @@ export default function Header() {
         </nav>
         
         <div className="flex gap-4">
+          <Link href="/login" className="px-5 py-2.5 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+            School Login
+          </Link>
           <Link href="/onboarding" className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition-all">
   Get Started
 </Link>
-          <button className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm hidden sm:block">
-            Get Started
-          </button>
         </div>
       </div>
     </header>
